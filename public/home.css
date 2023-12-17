@@ -1,0 +1,18 @@
+
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.home-div-first {
+    background-color: white;
+    height: 100vh;
+    width: 80vw;
+}
+
+.home-div-second {
+    background-color: white;
+    height: 80vh;
+}
