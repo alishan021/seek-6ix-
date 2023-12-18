@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { collectionModel, adminModel } = require('./config');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const nocache = require('nocache');
 
 
 // creating app instance for express
@@ -33,6 +34,9 @@ app.use(session({
 // cookie parsding;
 app.use(cookieParser());
 
+// stop caching
+app.use(nocache());
+
 
 
 
@@ -41,7 +45,7 @@ app.get( '/', ( req, res)=> {
     if(req.session.user){
         res.render('home');
     }else{
-        res.render('login', { status: 'you are not logged in'});
+        res.redirect('/login');
     }
 })
 
@@ -99,7 +103,7 @@ app.post( '/login', async ( req, res)=> {
    
     try{
         if(req.session.user){
-            res.redirect('/home');
+            res.redirect('/');
         }
         const emailCheck = await collectionModel.findOne({ email: req.body.email });
 
@@ -110,7 +114,7 @@ app.post( '/login', async ( req, res)=> {
         const isPasswordMatch = await bcrypt.compare( req.body.password, emailCheck.password );
         if( isPasswordMatch ){
             req.session.user = req.body.email;
-            res.status(200).render('home');
+            res.status(200).redirect('/');
         }else{
             res.send(' wrong password');
         }
@@ -124,56 +128,6 @@ app.post( '/login', async ( req, res)=> {
 
 
 
-// add-user router
-app.get('/admin', async ( req, res) => {
-    
-   try{
-        const user = await collectionModel.find({})
-        console.log(user);
-        res.status(200).render('admin', { user: user });
-    }catch(err) {
-        console.log(user);
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-    }
-       
-});
-
-
-// add user
-app.get( '/add', ( req, res)=> {
-    res.render('add');
-})
-
-
-app.post( '/add', async ( req, res)=> {
-
-    const data = {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        repassword: req.body.repassword
-    }
-
-        // checking if user already exists
-        const existUser = await collectionModel.findOne({ email: data.email });
-
-        if(existUser){
-            res.send('user already exists');
-        }else{
-            // hasing passwords
-            const saltRounds = 10; // saltrounds count for bcrypt
-            const hashedPass = await bcrypt.hash( data.password, saltRounds);
-
-            data.password = hashedPass; // changing original password to hashed password
-            const userdata = await collectionModel.create(data);
-        console.log( userdata);
-
-        res.status(200).redirect('admin');
-        // }
-    }
-
-});
 
 
 
@@ -185,23 +139,15 @@ app.post( '/add', async ( req, res)=> {
 
 
 
-// session destroy
-app.get('/logout', ( req, res)=> {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-        req.session.destroy((err) => {
-            if(err){
-                console.log(err);
-            }else{
-                console.log('session destroyed');
-                res.redirect('/');
-            }
-        })
-})
 
 
 
 app.get( '/admin-login', (req, res)=> {
-    res.render('admin-login');
+    if(req.session.admin){
+        res.redirect('/admin');
+    }else {
+        res.render('admin-login');
+    }
 })
 
 
@@ -217,12 +163,13 @@ app.post( '/admin-login', async ( req, res)=> {
 
         const isAdmPass = await bcrypt.compare( req.body.password, emailCheck.password );
         if( isAdmPass ){
-            req.session.adminSession = true;
-            console.log(req.session.adminSession);
             if(isAdmPass){
-            res.status(200).render('admin');
+                console.log(`password correct`);
+               req.session.admin = req.body.email;
+               res.redirect('/admin');
             }else {
-                res.redirect('admin-login');
+                console.log('password incorrect');
+                res.redirect('/admin-login');
             }
         }else{
             res.send(' wrong password');
@@ -274,11 +221,151 @@ app.post( '/admin-signup', async ( req, res)=> {
 });
 
 
-app.get('/test', async ( req, res)=> {
-    const userdata = await collectionModel.find({});
-    console.log(userdata);
-    res.send('success');
-})
+
+
+// add-user router
+app.get('/admin', async ( req, res) => {
+    
+    try{
+         if(req.session.admin){
+            const userData = await collectionModel.find({})
+            res.status(200).render('admin', { user: userData });
+         }else {
+            res.redirect('/admin-login');
+         }
+     }catch(err) {
+         console.log(err);
+         res.status(500).send('Internal Server Error');
+     }
+        
+ });
+
+ 
+ 
+ // add user
+ app.get( '/add', ( req, res)=> {
+     res.render('add');
+ })
+ 
+ 
+ app.post( '/add', async ( req, res)=> {
+ 
+     const data = {
+         username: req.body.username,
+         email: req.body.email,
+         password: req.body.password,
+         repassword: req.body.repassword
+     }
+ 
+         // checking if user already exists
+         const existUser = await collectionModel.findOne({ email: data.email });
+ 
+         if(existUser){
+             res.send('user already exists');
+         }else{
+             // hasing passwords
+             const saltRounds = 10; // saltrounds count for bcrypt
+             const hashedPass = await bcrypt.hash( data.password, saltRounds);
+ 
+             data.password = hashedPass; // changing original password to hashed password
+             const userdata = await collectionModel.create(data);
+         console.log( userdata);
+ 
+         res.status(200).redirect('admin');
+         // }
+     }
+ 
+ });
+
+
+
+
+// session destroy
+app.get('/logout', ( req, res)=> {
+
+        req.session.destroy((err) => {
+            if(err){
+                console.log(err);
+            }else{
+                console.log('session destroyed');
+                res.redirect('/');
+            }
+        })
+});
+
+
+// admin session destroy
+app.get('/logout-admin', ( req, res)=> {
+
+    req.session.destroy((err) => {
+        if(err){
+            console.log(err);
+        }else{
+            console.log('session destroyed');
+            res.redirect('/admin-login');
+        }
+    })
+});
+
+
+// app.get('/edit', (req, res)=> {
+//     const userData = req.body;
+//     res.render('edit', { user: userData });
+// })
+
+
+
+// edit user
+app.get( `/edit/:id`, async (req, res)=> {
+    let { id } = req.params;
+    console.log(id);
+    await collectionModel.findById(id)
+        .then((user)=> {
+            if(user == null){
+                console.log('failer');
+                res.redirect('/admin');
+            }else {
+                console.log('success');
+                res.render('edit', { user: user });
+            }
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
+});
+
+app.post( '/edit/:id', async ( req, res)=> {
+    const userId = req.params.id;
+    const userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    }
+    await collectionModel.updateOne({ _id: userId}, userData )
+        .then((result)=> {
+            console.log(result);
+            res.send( `success `);
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
+
+});
+
+
+// delete users
+app.get( '/delete/:id', async ( req, res)=> {
+    const userId = req.params.id;
+    console.log(userId);
+    const userData = await collectionModel.findByIdAndDelete(userId)
+        .then((user)=> {
+            res.redirect('/admin');
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
+});
+
 
 
 
