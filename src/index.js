@@ -43,7 +43,9 @@ app.use(nocache());
 //home router
 app.get( '/', ( req, res)=> {
     if(req.session.user){
-        res.render('home');
+        const user = collectionModel.findOne({email: req.session.email})
+        console.log(user);
+        res.render('home', { user });
     }else{
         res.redirect('/login');
     }
@@ -125,20 +127,29 @@ app.post( '/login', async ( req, res)=> {
 
 
 
+app.post('/search', async ( req, res)=> {
+    try{
+        const { search } = req.body;
+        console.log( search );
+        const filteredUsers = await collectionModel.find({
+            $or: [
+                { username: { $regex: new RegExp( search, 'i' )} },
+                { email: { $regex: new RegExp( search, 'i') } },
+            ]
+        }, 
+        { email: 1, username: 1, _id: 1, password: 1});
+        console.log(filteredUsers);
+        // if(!user){
+        //     const hline = document.querySelector('[h-row-line]');
+        // }
 
+        res.render('admin', { user: filteredUsers });
 
-
-
-
-
-// edit-user
-// app.get( 'edit', (req, res)=> {
-
-// })
-
-
-
-
+        }
+        catch(err){
+            console.log(err);
+        }
+})
 
 
 
@@ -175,7 +186,7 @@ app.post( '/admin-login', async ( req, res)=> {
             res.send(' wrong password');
         }
     }catch(err){
-        console.log(err);
+        console.log(err + 'hai');
     }
 });
 
@@ -283,28 +294,23 @@ app.get('/admin', async ( req, res) => {
 // session destroy
 app.get('/logout', ( req, res)=> {
 
-        req.session.destroy((err) => {
-            if(err){
-                console.log(err);
-            }else{
-                console.log('session destroyed');
-                res.redirect('/');
-            }
-        })
+        delete req.session.user;
+            
+        console.log('user session destroyed');
+        res.redirect('/');
+            
 });
 
 
 // admin session destroy
 app.get('/logout-admin', ( req, res)=> {
 
-    req.session.destroy((err) => {
-        if(err){
-            console.log(err);
-        }else{
-            console.log('session destroyed');
-            res.redirect('/admin-login');
-        }
-    })
+    delete req.session.admin;
+        
+    console.log('admin ession destroyed');
+    res.redirect('/admin-login');
+        
+    
 });
 
 

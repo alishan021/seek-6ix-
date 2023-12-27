@@ -31,11 +31,17 @@
     <div class="home-div-first-">
         <div class="home-div-second">
             <div>
-                <h1 class="home-items">Hi everyone</h1>
+                <h1 class="home-items hi-user">Hi <%= user.username %></h1>
             </div>
         
-            <p class="home-items" ><a href="/login">Login</a></p>
-            <p class="home-items" ><a href="/signup">Signup</a></p>
+            <div class="div-login-signup">
+                <div class="login-div">
+                    <p class="home-items" ><a href="/login" id="login">Login</a></p>
+                </div>
+                <div class="signup-div">
+                    <p class="home-items" ><a href="/signup" id="signup">Signup</a></p>
+                </div>
+            </div>
             <!-- <p><= status %></p> -->
         
         </div>

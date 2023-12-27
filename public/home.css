@@ -6,6 +6,10 @@
 }
 
 
+body{
+    background-color: beige;
+}
+
 
 .home-div-first {
     background-color: white;
@@ -22,12 +26,41 @@
     height: 100%;
     background-color: antiquewhite;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
 }
 
 
-.home-items {
+.hi-user{
     padding: 20px;
+}
+
+
+div .login-div, .signup-div{
+    color: white;
+    padding: 10px 20px;
+    background-color: rgba(0, 203, 243, 0.557);
+    margin: 20px 20px;
+    border-radius: 10px;
+}
+
+
+
+.div-login-signup {
+    display: flex;
+    background-color: darkblue;
+    color: white;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    margin: 0 10px;
+    
+}
+
+#signup, #login{
+    color: white;
+    text-decoration: none;
+
 }

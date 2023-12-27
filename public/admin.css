@@ -7,31 +7,110 @@
 }
 
 
-.table-box {
-    margin: 50px 0;
+body {
+    background-image: url('./images/abstract-1264071.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: bisque;
 }
 
 
+.table-box {
+    margin: 50px 0 0 0;
+}
+
+
+.search-user-div{
+    width: 80%;
+    margin: 10px auto;
+}
+
+
+.search-inner-box{
+    padding: 10px;
+    background: #de68e4;
+    border-radius: 10px;
+}
+
+
+
+input{
+    border-radius: 20px ;
+    border: 1px solid black;
+    outline: 0;
+    padding: 5px 10px 5px 10px;
+    margin-right:  auto;
+    margin-left: auto;
+}
+
+
+.search-button {
+    font-size: small;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin: 0 10px;
+    background-color: white;
+    border: 1px solid white;
+}
+
+
+.search-button:hover {
+    background-color: #8665f7;
+    color: white;
+}
+
+/* 
 .table-row {
     display: table;
     width: 80%;
-    margin: 2px auto;
-    background-color: transparent;
+    margin: 0 auto;
     padding: 12px 0;
     color: #555;
     font-size: 13px;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 50, 0.3);
+    background-color: rgba(32, 178, 171, 0.637);
 }
 
 
 .table-cell {
     display: table-cell;
-    /* text-align: center; */
+    text-align: center;
     padding: 4px 20px;
     vertical-align: middle;
     max-width: 100px;
     overflow: hidden;
+    filter: blur(5px);
+}  */
+
+
+
+.table-row {
+    display: table;
+    width: 80%;
+    margin: 0 auto;
+    padding: 12px 0;
+    color: rgb(73, 73, 73);
+    font-size: 13px;
+    /* box-shadow: 0 1px 4px 0 rgba(0, 0, 50, 0.3); */
+    backdrop-filter: blur(5px);
+    background-color: rgba(32, 178, 171, 0.164);
+    margin: 2px auto;
 }
+
+.table-cell {
+    display: table-cell;
+    text-align: center;
+    padding: 4px 20px;
+    vertical-align: middle;
+    max-width: 100px;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 
 
 .table-head {
@@ -80,4 +159,13 @@
 
 .edit-icon {
     color: green;
+}
+
+
+.message-box {
+    background-color: lightseagreen;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

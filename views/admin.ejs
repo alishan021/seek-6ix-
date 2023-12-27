@@ -27,15 +27,22 @@
             </div>
         </div>
         </nav>
-    
-<!-- 
-    <div class="first-div">
-        <div class="second-div">
-        </div>
-    </div>
-     -->
+
 
      <div class="table-box">
+
+        <div class="search-user-div">
+            <div class="search-inner-box">
+
+               <form action="/search" method="post">
+                    <label for="search">Search : </label>
+                    <input type="search" id="search" search-user name="search" >
+                    <button type="submit" class="search-button" > Search </button>
+               </form>
+
+            </div>
+        </div>
+
         <div class="table-row table-head">
             <div class="table-cell id">
                 <p>Id</p>
@@ -50,7 +57,15 @@
                 <p>Password</p>
             </div>
         </div>
-            <% user.forEach((user , index) => { %>
+
+        <% if(user.length == 0){ %>
+            <div class="message-box table-row">
+           <h6>No user found</h6>
+           </div>  
+       <% } %>
+       
+        <% user.forEach((user , index) => { %>
+
 
         <div class="table-row">
             <div class="table-cell id">
@@ -71,12 +86,15 @@
             <div class="icons">
                 <p><a href="/delete/<%= user._id %>" class="delete-icon icons"><i class="fas fa-trash fa-lg mx-1"></i></a></p>
             </div>
+            <div class="h-row-line">     
+         </div>
         </div>
 
+           <% }) %>
 
-           <% }); %>
-           
-     </div>
+        </div>
+
+       
      
 </body>
 </html>
